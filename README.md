@@ -1,87 +1,94 @@
-# Installing Odoo 16.0 with one command (Supports multiple Odoo instances on one server).
+# Instalação simplificada
 
-## Quick Installation
+Instalando o Odoo 16 com apenas um comando.
 
-Install [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/) yourself, then run the following to set up first Odoo instance @ `localhost:10016` (default master password: `minhng.info`):
+(Suporta várias instâncias na mesma máquina.)
+
+
+Instalar primeiramente na sua máquina o [docker](https://docs.docker.com/get-docker/) e o [docker-compose](https://docs.docker.com/compose/install/) para que seja possível fazer a instalação. 
+
+Vamos usar a ferramenta cURL ("URL do cliente"), para fazer as tranferências de dados, assim, devese-se checar se há o cURL instalado:
 
 ``` bash
-curl -s https://raw.githubusercontent.com/minhng92/odoo-16-docker-compose/master/run.sh | sudo bash -s odoo-one 10016 20016
+curl --version
 ```
-and/or run the following to set up another Odoo instance @ `localhost:11016` (default master password: `minhng.info`):
-
-``` bash
-curl -s https://raw.githubusercontent.com/minhng92/odoo-16-docker-compose/master/run.sh | sudo bash -s odoo-two 11016 21016
-```
-
-Some arguments:
-* First argument (**odoo-one**): Odoo deploy folder
-* Second argument (**10016**): Odoo port
-* Third argument (**20016**): live chat port
-
-If `curl` is not found, install it:
+Se não tiver instalado, fazê-lo com o seguinte código:
 
 ``` bash
 $ sudo apt-get install curl
-# or
+# ou
 $ sudo yum install curl
 ```
 
-## Usage
+Agora, rodar a instalação do Odoo16 através do seguinte código:
 
-Start the container:
+``` bash
+curl -s https://raw.githubusercontent.com/ronaldopadula/odoo-16-br-docker-compose/master/instalar.sh | sudo bash -s odoo16-one 10016 20016
+```
+
+para configurar a primeira instância do Odoo16 @ 'localhost:10016' (senha mestra padrão: 'ronaldo.padula')
+
+e
+
+``` bash
+curl -s https://raw.githubusercontent.com/ronaldopadula/odoo-16-br-docker-compose/master/instalar.sh | sudo bash -s odoo16-two 11016 21016
+```
+
+para configurar uma segunda instância do Odoo @ 'localhost:11016' (senha mestra padrão: 'ronaldo.padula')
+
+Nos links anteriores, :
+* Primeiro Argumento (**odoo16-one**): Pasta de deploy do Odoo16
+* Segundo argumento (**10016**): Porta para o Odoo
+* Terceiro argumento (**20016**): porta para o live chat
+
+# Usando
+
+Iniciar o container:
 ``` sh
 docker-compose up
 ```
-Then open `localhost:10016` to access Odoo 16.0.
 
-- **If you get any permission issues**, change the folder permission to make sure that the container is able to access the directory:
-
-``` sh
-$ sudo chmod -R 777 addons
-$ sudo chmod -R 777 etc
-$ sudo chmod -R 777 postgresql
-```
-
-- If you want to start the server with a different port, change **10016** to another value in **docker-compose.yml** inside the parent dir:
+* Posteriormente abrir `localhost:10016` para acessar a instalação do Odoo 16. Se precisar inciar o servidor Odoo em uma porta diferente, mudar **10016** para outro valor referente a porta escolhida no arquivo **docker-compose.yml**:
 
 ```
 ports:
  - "10016:8069"
 ```
 
-- To run Odoo container in detached mode (be able to close terminal without stopping Odoo):
+Executar o contêiner Odoo no modo desanexado (ser capaz de fechar o terminal sem parar Odoo):
 
 ```
 docker-compose up -d
 ```
 
-- To Use a restart policy, i.e. configure the restart policy for a container, change the value related to **restart** key in **docker-compose.yml** file to one of the following:
-   - `no` =	Do not automatically restart the container. (the default)
-   - `on-failure[:max-retries]` =	Restart the container if it exits due to an error, which manifests as a non-zero exit code. Optionally, limit the number of times the Docker daemon attempts to restart the container using the :max-retries option.
-  - `always` =	Always restart the container if it stops. If it is manually stopped, it is restarted only when Docker daemon restarts or the container itself is manually restarted. (See the second bullet listed in restart policy details)
-  - `unless-stopped`	= Similar to always, except that when the container is stopped (manually or otherwise), it is not restarted even after Docker daemon restarts.
-```
- restart: always             # run as a service
+**Se receber mensagem com o problema de permissão**, altere a permissão da pasta para certificar-se de que o contêiner é capaz de acessar o diretório:
+
+``` sh
+$ git clone https://github.com/ronaldopadula/odoo-16-br-docker-compose.git
+$ sudo chmod -R 777 addons
+$ sudo chmod -R 777 etc
+$ mkdir -p postgresql
+$ sudo chmod -R 777 postgresql
 ```
 
-- To increase maximum number of files watching from 8192 (default) to **524288**. In order to avoid error when we run multiple Odoo instances. This is an *optional step*. These commands are for Ubuntu user:
+Para evitar erros quando executamos várias instâncias do Odoo., deve-se aumentar o número máximo de arquivos em execução de 8192 (padrão) para 524288. Esta é uma etapa opcional, que no ubuntu é feita com os seguintes comandos:
 
 ```
 $ if grep -qF "fs.inotify.max_user_watches" /etc/sysctl.conf; then echo $(grep -F "fs.inotify.max_user_watches" /etc/sysctl.conf); else echo "fs.inotify.max_user_watches = 524288" | sudo tee -a /etc/sysctl.conf; fi
 $ sudo sysctl -p    # apply new config immediately
-``` 
+```
 
-## Custom addons
+# Custom addons
 
-The **addons/** folder contains custom addons. Just put your custom addons if you have any.
+A pasta addons/ conportará addons personalizados. Basta colocar seus addons personalizados, se você tiver algum.
 
-## Odoo configuration & log
+# Configuração e log do Odoo
 
-* To change Odoo configuration, edit file: **etc/odoo.conf**.
-* Log file: **etc/odoo-server.log**
-* Default database password (**admin_passwd**) is `minhng.info`, please change it @ [etc/odoo.conf#L60](/etc/odoo.conf#L60)
+* Para mudar as configurações do odoo, editar o arquivo: **etc/odoo.conf**.
+* O arquivo de log do Odoo é : **etc/odoo-server.log**
+* O password padrão da base de dados (**admin_passwd**) é `ronaldo.padula`, mas você pode mudar isso em @ [etc/odoo.conf#L60](/etc/odoo.conf#L60)
 
-## Odoo container management
+# Para administrar os containeres
 
 **Run Odoo**:
 
@@ -101,11 +108,11 @@ docker-compose restart
 docker-compose down
 ```
 
-## Live chat
+# Live chat
 
-In [docker-compose.yml#L21](docker-compose.yml#L21), we exposed port **20016** for live-chat on host.
+Em [docker-compose.yml#L21](docker-compose.yml#L21), nós expomos a porta **20016** para o host do live-chat.
 
-Configuring **nginx** to activate live chat feature (in production):
+Configurar o **nginx** para ativar o recurso de live-chat (em produção):
 
 ``` conf
 #...
@@ -119,12 +126,12 @@ server {
 #...
 ```
 
-## docker-compose.yml
+# docker-compose.yml
 
 * odoo:16.0
-* postgres:15
+* postgres:14
 
-## Odoo 16.0 screenshots after successful installation.
+# Odoo 16 screenshots
 
 <img src="screenshots/odoo-16-welcome-screenshot.png" width="50%">
 
