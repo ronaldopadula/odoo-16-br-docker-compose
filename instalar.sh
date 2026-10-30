@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # =============================================================================
-#  Odoo 16 — atalho para o instalador unificado
+#  Odoo 16 — atalho para o instalador central
 #
-#  Este repositório foi unificado em:
+#  O instalador é mantido em:
 #    https://github.com/ronaldopadula/odoo-15-br-docker-compose
-#  que instala o Odoo 14, 15 ou 16 com o mesmo script, de forma segura.
+#  que instala o Odoo (versões 14 a 19) com o mesmo script, de forma segura.
 #
 #  Este arquivo apenas baixa o instalador de lá e o executa com VERSAO=16.
-#  Uso (igual ao do instalador unificado):
+#  Uso (igual ao do instalador central):
 #    sudo bash instalar.sh <pasta> <porta> [base_inicial]
 # =============================================================================
 set -euo pipefail
