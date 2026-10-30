@@ -1,19 +1,19 @@
-#!/bin/bash
-DESTINATION=$1
-PORT=$2
-CHAT=$3
-# clone Odoo directory
-git clone --depth=1 https://github.com/minhng92/odoo-16-docker-compose $DESTINATION
-rm -rf $DESTINATION/.git
-# set permission
-mkdir -p $DESTINATION/postgresql
-sudo chmod -R 777 $DESTINATION
-# config
-if grep -qF "fs.inotify.max_user_watches" /etc/sysctl.conf; then echo $(grep -F "fs.inotify.max_user_watches" /etc/sysctl.conf); else echo "fs.inotify.max_user_watches = 524288" | sudo tee -a /etc/sysctl.conf; fi
-sudo sysctl -p
-sed -i 's/10016/'$PORT'/g' $DESTINATION/docker-compose.yml
-sed -i 's/20016/'$CHAT'/g' $DESTINATION/docker-compose.yml
-# run Odoo
-docker-compose -f $DESTINATION/docker-compose.yml up -d
-
-echo 'Started Odoo @ http://localhost:'$PORT' | Master Password: ronaldo.padula | Live chat port: '$CHAT
+#!/usr/bin/env bash
+# =============================================================================
+#  Odoo 16 — atalho para o instalador unificado
+#
+#  Este repositório foi unificado em:
+#    https://github.com/ronaldopadula/odoo-15-br-docker-compose
+#  que instala o Odoo 14, 15 ou 16 com o mesmo script, de forma segura.
+#
+#  Este arquivo apenas baixa o instalador de lá e o executa com VERSAO=16.
+#  Uso (igual ao do instalador unificado):
+#    sudo bash instalar.sh <pasta> <porta> [base_inicial]
+# =============================================================================
+set -euo pipefail
+URL="https://raw.githubusercontent.com/ronaldopadula/odoo-15-br-docker-compose/${REF:-master}/instalar.sh"
+TMP=$(mktemp)
+trap 'rm -f "$TMP"' EXIT
+command -v curl >/dev/null || { echo "ERRO: instale o curl (apt-get install -y curl)." >&2; exit 1; }
+curl -fsSL "$URL" -o "$TMP" || { echo "ERRO: não foi possível baixar $URL" >&2; exit 1; }
+VERSAO=16 bash "$TMP" "$@"
